@@ -1,8 +1,8 @@
 # Snova Mod (`Snova.Std.Mod`)
 
-Gerenciador de módulos e resolução de dependências no estilo Go modules em Snovalang puro.
+Module and dependency management in pure Snovalang adhering to Go modules semantics.
 
-## Módulos
-- `Version` (SemVer parser e comparador)
-- `ModFile` (Parser e gerador de `snova.mod`)
-- `GitProviderResolver` (Resolução de URLs e repositórios Git)
+## Features
+- `Version` SemVer 2.0.0 parser and comparator (`isGreaterThan`)
+- `ModFile` generator and parser for `snova.mod`
+- `GitProviderResolver` for resolving canonical git URLs (`github.com`, `gitlab.com`, etc.)
