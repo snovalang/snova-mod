@@ -121,6 +121,7 @@ public struct ModuleRequire {
  */
 public class ModFile {
     public var modulePath: string
+    public var isRoot: bool
     public var snovaVersion: string
     public var requires: Array<ModuleRequire>
 
@@ -130,11 +131,13 @@ public class ModFile {
      *
      * -- Param{modulePath}: Canonical module path identifier.
      * -- Param{snovaVersion}: Minimum compatible Snovalang version.
+     * -- Param{isRoot}: Whether this module is a workspace root.
      * -- Returns: ModFile instance.
      */
-    public static method new(modulePath: string, snovaVersion: string = "1.0.0"): ModFile {
+    public static method new(modulePath: string, snovaVersion: string = "1.0.0", isRoot: bool = false): ModFile {
         let mf = ModFile()
         mf.modulePath = modulePath
+        mf.isRoot = isRoot
         mf.snovaVersion = snovaVersion
         mf.requires = []
         return mf
@@ -156,21 +159,39 @@ public class ModFile {
 
     /* -- Doc:{format}
      *
-     * -- Description: Formats ModFile into standard snova.mod file syntax text.
+     * -- Description: Formats ModFile into standard mod.sno declarative manifest text.
      *
-     * -- Returns: Formatted snova.mod file contents.
+     * -- Returns: Formatted mod.sno file contents.
      */
     public method format(): string {
         var out = "module " + this.modulePath + "\n\n"
-        out = out + "snova " + this.snovaVersion + "\n\n"
-        out = out + "require (\n"
+        if this.isRoot {
+            out = out + "root true\n\n"
+        }
+        out = out + "snova \"" + this.snovaVersion + "\"\n\n"
+        out = out + "dependencies(\n"
+        out = out + "    direct = [\n"
         var i = 0
+        var directCount = 0
         while i < this.requires.len() {
             let req = this.requires[i]
-            let indir = req.isIndirect ? " // indirect" : ""
-            out = out + "    " + req.path + " " + req.version.toString() + indir + "\n"
+            if !req.isIndirect {
+                out = out + "        \"" + req.path + "@" + req.version.toString() + "\",\n"
+                directCount = directCount + 1
+            }
             i = i + 1
         }
+        out = out + "    ],\n"
+        out = out + "    indirect = [\n"
+        var j = 0
+        while j < this.requires.len() {
+            let req = this.requires[j]
+            if req.isIndirect {
+                out = out + "        \"" + req.path + "\",\n"
+            }
+            j = j + 1
+        }
+        out = out + "    ]\n"
         out = out + ")\n"
         return out
     }
