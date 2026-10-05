@@ -6,3 +6,8 @@ Module and dependency management in pure Snovalang adhering to Go modules semant
 - `Version` SemVer 2.0.0 parser and comparator (`isGreaterThan`)
 - `ModFile` generator and parser for `snova.mod`
 - `GitProviderResolver` for resolving canonical git URLs (`github.com`, `gitlab.com`, etc.)
+
+## License
+
+This project is licensed under the [Apache License, Version 2.0](LICENSE).
+Copyright 2026 Snovalang contributors. See [NOTICE](NOTICE).
